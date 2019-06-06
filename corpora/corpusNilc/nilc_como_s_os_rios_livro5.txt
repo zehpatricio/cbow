@@ -1,0 +1,15 @@
+﻿
+
+Veja as partes que um rio pode ter:
+
+Nascente: lugar onde o rio nasce. Em geral, ele nasce de uma mina de água que vem do fundo da terra.
+
+Margens: terras localizadas nos dois lados do rio. Os rios têm margem direita e margem esquerda, de acordo com o caminho de suas águas.
+
+Leito: caminho por onde as águas se movimentam.
+
+Foz: lugar onde o rio termina, desaguando no mar, num lago ou em outro rio.
+
+Afluente: rio que deságua em outro rio, considerado - principal.
+
+Queda-dágua: lugar onde o caminho de um rio fica bastante inclinado. A queda-dágua também é conhecida por cachoeira, cascata, salto, corredeira, catarata etc.

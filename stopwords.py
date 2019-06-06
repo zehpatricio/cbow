@@ -1,0 +1,30 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+STOPWORDS = [
+    u'de', u'a', u'o', u'que', u'e', u'do', u'da', u'em', u'um', u'para',
+    u'uma', u'os', u'no', u'se', u'na', u'por', u'mais', u'as', u'dos',
+    u'ao', u'ele', u'das', u'seu', u'sua', u'ou', u'nos', u'já', u'pelo',
+    u'pela', u'até', u'isso', u'ela', u'entre', u'aos', u'seus', u'nas',
+    u'esse', u'essa', u'num', u'nem', u'suas', u'meu', u'às', u'minha',
+    u'numa', u'pelos', u'elas', u'qual', u'nós', u'lhe', u'deles',
+    u'essas', u'esses', u'pelas', u'este', u'dele', u'te', u'vos', u'lhes',
+    u'meus', u'minhas', u'teu', u'tua', u'teus', u'tuas', u'nosso', u'nossa',
+    u'nossos', u'nossas', u'dela', u'delas', u'esta', u'estes', u'estas',
+    u'aquele', u'aquela', u'aqueles', u'aquelas', u'isto', u'aquilo',
+    u'!', u'"', u'#', u'$', u'%', u'&', u'(', u')', u'*', u'+', u',',
+    u'-', u'.', u'/', u':', u';', u'<', u'=', u'>', u'?', u'@', u'[',
+    u'\\', u']', u'^', u'_', u'`', u'{', u'|', u'}', u'~', u'«',
+    'de', 'a', 'o', 'que', 'e', 'do', 'da', 'em', 'um', 'para',
+    'uma', 'os', 'no', 'se', 'na', 'por', 'mais', 'as', 'dos',
+    'ao', 'ele', 'das', 'se', 'sua', 'o', 'nos', 'já', 'pelo',
+    'pela', 'até', 'isso', 'ela', 'entre', 'aos', 'seus', 'nas',
+    'esse', 'essa', 'num', 'nem', 'suas', 'me', 'às', 'minha',
+    'numa', 'pelos', 'elas', 'qual', 'nós', 'lhe', 'deles',
+    'essas', 'esses', 'pelas', 'este', 'dele', 'te', 'vos', 'lhes',
+    'meus', 'minhas', 'te', 'tua', 'teus', 'tuas', 'nosso', 'nossa',
+    'nossos', 'nossas', 'dela', 'delas', 'esta', 'estes', 'estas',
+    'aquele', 'aquela', 'aqueles', 'aquelas', 'isto', 'aquilo',
+    '!', '"', '#', '$', '%', '&', '(', ')', '*', '+', ',',
+    '-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[',
+    '\\', ']', '^', '_', '`', '{', '|', '}', '~', '«'
+]

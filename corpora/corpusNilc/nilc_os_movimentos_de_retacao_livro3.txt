@@ -1,0 +1,29 @@
+﻿
+
+A Terra, o planeta em que vivemos, tem dois movimentos: rotação e translação.
+
+Rotaçao: A Terra faz o movimento de rotação, girando em torno de si mesma, como se fosse um grande pião.
+
+Para fazer uma volta completa em torno de si mesma a Terra gasta 24 horas e produz o dia e a noite.
+
+Experimente passar uma vareta de bambu ou um arame pelo centro de uma laranja.
+
+Acenda uma vela e vá rodando a laranja. A parte da laranja voltada para a vela torna-se mais clara, correspondendo ao dia; a outra metade, mais escura corresponde à noite.
+
+Assim é com a Terra, a parte voltada para o Sol é dia e a outra parte é noite.
+
+O movimento de rotação produz o dia e a noite e demora 24 horas
+
+Translação: A Terra faz o movimento de translação girando em torno do Sol.
+
+Para dar uma volta completa, a terra gasta 365 dias e 6 horas, produzindo as quatro estações do ano.
+
+As estações do ano são: primavera, verão, outono e inverno.
+
+A primavera é a estação das flores.
+
+0 verão é a estação do calor.
+
+0 outono é a estação dos frutos.
+
+0 inverno é a estação do frio.
