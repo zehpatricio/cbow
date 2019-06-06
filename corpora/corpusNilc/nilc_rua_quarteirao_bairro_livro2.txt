@@ -1,0 +1,15 @@
+﻿
+
+Você sabe encontrar um endereço com facilidade?
+
+Para encontrar um endereço devemos saber o nome da rua e o número da casa.
+
+Toda rua tem um nome. As casas da rua têm números: números pares à direita e números ímpares à esquerda. Isso ajuda as pessoas a localizar seus endereços.
+
+Um conjunto de casas cercado por ruas forma um quarteirão.
+
+As ruas e os quarteirões formam o bairro.
+
+Os moradores do bairro também fazem parte de uma comunidade.
+
+A comunidade do bairro costuma organizar a associação dos moradores do bairro. Assim, os moradores podem trabalhar juntos para a melhoria do bairro.

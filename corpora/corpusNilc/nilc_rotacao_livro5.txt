@@ -1,0 +1,18 @@
+﻿
+
+A Terra não está parada no espaço. Ela sempre faz dois movimentos: o de rotação e o de translação. Vamos ver como isso acontece.
+
+O movimento de rotação a Terra faz em volta de si mesma, como se fosse um pião. Ela demora 24 horas para fazer esse movimento, ou seja, para dar uma volta completa em torno de si mesma.
+
+O movimento de rotação dá origem ao dia e à noite.
+
+É dia na metade da Terra que está iluminada pelo Sol.
+
+É noite na outra metade.
+
+Aqui na Terra, no decorrer do dia, nós percebemos o movimento de rotação dessa maneira.
+
+Ao mesmo tempo que a Terra gira em volta de sí mesma, ela também gira em volta do Sol. Ela leva 365 días para fazer isso.
+
+O movimento da Terra em volta do Sol chama-se movimento de translação.
+
