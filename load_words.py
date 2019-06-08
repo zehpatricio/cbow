@@ -59,8 +59,65 @@ def prepare_data(words, window, vocab):
         data.append(one_hot)
     return data
 
+if __name__ == '__main__':
+    words = load_words() # 278082
+    vocab = list(set(words)) # 32522
+    size = len(vocab)
+    data = prepare_data(words[:1000], 5, vocab)
+    # data2 = prepare_data(words[50000:100000], 5, vocab)
+    # data = data + data2
+    data_x = [dt[:4] for dt in data]
+    data_y = [dt[4] for dt in data]
 
-words = load_words() # 278082
-vocab = list(set(words)) # 32522
-data = prepare_data(words, 5, vocab)
-import pdb;pdb.set_trace()
+    import numpy
+    import keras
+    from keras.models import Sequential
+    from keras.layers import Dense, Embedding, Lambda, Flatten
+    from sklearn.model_selection import StratifiedKFold
+    import keras.backend as K
+    embed_size = 100
+
+    cbow = Sequential()
+    cbow.add(Embedding(input_dim=size, output_dim=64))
+    cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(64,)))
+    cbow.add(Dense(size, activation='softmax'))
+    cbow.compile(loss='categorical_crossentropy', optimizer='rmsprop')
+
+    # view model summary
+    print(cbow.summary())
+
+    for epoch in range(1, 6):
+        loss = 0.
+        i = 0
+        for j in range(len(data_x)):
+            i += 1
+
+                # import pdb;pdb.set_trace()
+            loss += cbow.train_on_batch(data_x[j], data_y[j])
+            if i % 100000 == 0:
+                print('Processed {} (context, word) pairs'.format(i))
+
+        print('Epoch:', epoch, '\tLoss:', loss)
+        print()
+
+    # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=7)
+    # for train, test in kfold.split(data_x, data_y):
+    # X_train = data_x[train]
+    # X_test = data_x[test]
+    # y_train = data_y[train]
+    # y_test = data_y[test]   
+
+
+    # data_x = numpy.array(data_x)
+    # data_y = numpy.array(data_y)
+
+    # modelo = Sequential()
+    # modelo.add(Embedding(size, 64, input_shape = (data_x.shape[1],1)))
+    # modelo.add(Dense(units=64, activation='relu'))
+    # modelo.add(Flatten())
+    # modelo.add(Dense(units=995, activation = 'softmax'))
+    # modelo.summary()
+    # modelo.compile(optimizer='adam', loss='categorical_crossentropy',metrics = ['accuracy'])
+    # # import pdb;pdb.set_trace()
+    # historico = modelo.fit(data_x,data_y,epochs=1000, batch_size=64)
+    # modelo.evaluate(X_test,y_test)
