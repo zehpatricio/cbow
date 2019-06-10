@@ -14,35 +14,49 @@ import pandas as pd
 import percentage
 import pickle
 
-def prepare_data(words, window_size, vocab_size):
+def prepare_data(words, window_size, vocab_size, filenumber=''):
     maxlen = window_size*2
     words_total = len(words)
-    data_x = list()
-    data_y = list()
-    filename = u'prepared_data.pkl'
+    contexts = list()
+    targets = list()
+    filename = u'prepared_data{}.pkl'.format(filenumber)
     try:
         with open(filename, u'rb') as arq:
-            data_x, data_y = pickle.load(arq)
+            contexts, targets = pickle.load(arq)
     except:
         for index, word in enumerate(words):
             percentage.progress(index, words_total)
             start = index - window_size
             end = index + window_size + 1
             
-            contexts = [words[i] for i in range(start, end) if 0 <= i < words_total and i != index]
-            contexts = ' '.join(contexts)
-            contexts = [one_hot(contexts, vocab_size, filters=[])]
-            labels = [one_hot(word, vocab_size, filters=[])]
-
-            x = pad_sequences(contexts, maxlen=maxlen)
-            y = np_utils.to_categorical(labels, vocab_size)
-            data_x.append(x)
-            data_y.append(y)
-
+            context = [words[i] for i in range(start, end) if 0 <= i < words_total and i != index]
+            context = ' '.join(context)
+            context = [one_hot(context, vocab_size, filters=[])]
+            contexts.append(context)
+            targets.append(word)
+        
         with open(filename, u'wb') as arq:
-            pickle.dump((data_x, data_y), arq)
+            pickle.dump((contexts, targets), arq)
+        
+    data_x = [pad_sequences(ctx, maxlen=maxlen) for ctx in contexts]
+    data_y = [
+        np_utils.to_categorical(
+            [one_hot(word, vocab_size, filters=[])], vocab_size
+        )
+        for word in targets
+    ]
 
     return data_x, data_y
+
+def load_data(words, window_size, vocab_size):
+    data_x = []
+    data_y = []
+    for num in range(1, 11):
+        x, y = prepare_data(words, window_size, vocab_size, filenumber=num)
+        data_x.append(x)
+        data_y.append(y)
+    
+    return x, y
 
 if __name__ == '__main__':
     words = load_words.load_words()
@@ -52,7 +66,7 @@ if __name__ == '__main__':
     dim = 100
 
     print("CARREGANDO DADOS")
-    x, y = prepare_data(words, window_size, vocab_size)
+    x, y = load_data(words, window_size, vocab_size)
     print("DADOS CARREGADOS")
 
     slc = int(len(x)*0.9)
