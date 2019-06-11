@@ -87,12 +87,21 @@ if __name__ == '__main__':
     test_docs = x[slc:]
     test_labels = y[slc:]
 
+    # import pdb;pdb.set_trace()
+    # cbow = Sequential()
+    # cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
+    # cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
+    # cbow.add(Dense(vocab_size, activation='softmax'))
+    # cbow.compile(loss='categorical_crossentropy', optimizer='adadelta')
+    # cbow.summary()
+    
     cbow = Sequential()
-    cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_length=window_size*2))
-    cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
-    cbow.add(Dense(vocab_size, activation='softmax'))
-    cbow.compile(loss='categorical_crossentropy', optimizer='adadelta')
+    cbow.add(Dense(64, activation='relu', input_shape=(4,)))
+    cbow.add(Dense(128, activation='relu'))
+    cbow.add(Dense(vocab_size+1, activation='softmax'))
     cbow.summary()
+    cbow.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
+
     parada = EarlyStopping(
         monitor='loss', min_delta=0.0004, patience=2, 
         verbose=1, mode='auto', restore_best_weights=True
