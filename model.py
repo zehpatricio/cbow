@@ -24,13 +24,12 @@ def load_data_from_file(filename, func, *args, **kwargs):
             pickle.dump(data, arq)
     return data
 
-def load_word_dicts(vocab, vocab_size):
+def load_word_dicts(vocab):
     word2num = {}
     num2word = {}
-    for word in vocab:
-        num = one_hot(word, vocab_size, filters=[])
-        word2num[word] = num[0]
-        num2word[num[0]] = word
+    for index, word in enumerate(vocab):
+        word2num[word] = index
+        num2word[index] = word
     return word2num, num2word
 
 def prepare_data(words, window_size, word2num, filenumber=''):
@@ -46,9 +45,11 @@ def prepare_data(words, window_size, word2num, filenumber=''):
         context = [word2num[words[i]] for i in range(start, end) if 0 <= i < words_total and i != index]
         contexts.append(context)
         targets.append(word2num[word])
-        
+
     data_x = [pad_sequences([ctx], maxlen=maxlen).flatten() for ctx in contexts]
-    data_y = [np_utils.to_categorical(word) for word in targets]
+    # ATENCION TO CATEGORICAL
+    import pdb;pdb.set_trace()
+    data_y = [np_utils.to_categorical(word, num_classes=len(word2num.keys())) for word in targets]
 
     return data_x, data_y
 
@@ -73,7 +74,7 @@ if __name__ == '__main__':
     dim = 100
 
     word2num, num2word = load_data_from_file(
-        'word_dicts.pkl', load_word_dicts, vocab, vocab_size
+        'word_dicts.pkl', load_word_dicts, vocab
     )
 
     print("CARREGANDO DADOS")
@@ -87,20 +88,12 @@ if __name__ == '__main__':
     test_docs = x[slc:]
     test_labels = y[slc:]
 
-    # import pdb;pdb.set_trace()
-    # cbow = Sequential()
-    # cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
-    # cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
-    # cbow.add(Dense(vocab_size, activation='softmax'))
-    # cbow.compile(loss='categorical_crossentropy', optimizer='adadelta')
-    # cbow.summary()
-    
     cbow = Sequential()
-    cbow.add(Dense(64, activation='relu', input_shape=(4,)))
-    cbow.add(Dense(128, activation='relu'))
-    cbow.add(Dense(vocab_size+1, activation='softmax'))
+    cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
+    cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
+    cbow.add(Dense(vocab_size, activation='softmax'))
+    cbow.compile(loss='categorical_crossentropy', optimizer='adadelta')
     cbow.summary()
-    cbow.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 
     parada = EarlyStopping(
         monitor='loss', min_delta=0.0004, patience=2, 
