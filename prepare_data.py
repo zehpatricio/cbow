@@ -6,6 +6,7 @@ vocab = list(set(words))
 vocab_size = len(vocab)
 window_size = 2
 sexto = int(len(words)/10)
+<<<<<<< HEAD
 word2num, num2word = model.load_data_from_file(
     'word_dicts.pkl', model.load_word_dicts, vocab
 )
@@ -20,3 +21,7 @@ for num in range(5,6):
         words[start: (end if end < num_words else num_words)],
         window_size, word2num, filenumber=num
     )
+=======
+import pdb;pdb.set_trace()
+x, y = model.prepare_data(words[:sexto], window_size, vocab_size)
+>>>>>>> cc6b4527a642d6fde39c88b1dbdeabfb5bb1139b
