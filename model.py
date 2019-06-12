@@ -13,15 +13,10 @@ import pandas as pd
 import percentage
 import pickle
 
-def to_categorical(data_y, size):
-    vectors = []
-    base_vector = [0 for i in range(size)]
-    tam = len(data_y)
-    for i, y in enumerate(data_y):
-        vector = base_vector.copy()
-        vector[y] = 1
-        vectors.append(vector)
-    return vectors
+def to_categorical(y, base_vector):
+    vector = base_vector.copy()
+    vector[y] = 1
+    return vector
 
 def load_data_from_file(filename, func, *args, **kwargs):
     try:
@@ -41,24 +36,23 @@ def load_word_dicts(vocab):
         num2word[index] = word
     return word2num, num2word
 
-def prepare_data(words, window_size, word2num, filenumber=''):
+def prepare_data(words, window_size, word2num, init=0, limit=10000):
     maxlen = window_size*2
     words_total = len(words)
-    contexts = list()
-    targets = list()
+    base_vector = [0 for i in range(words_total)]
     
-    for index, word in enumerate(words):
+    for index in range(init, limit):
+        if index >= limit:
+            break
         percentage.progress(index, words_total)
         start = index - window_size
         end = index + window_size + 1
-        context = [word2num[words[i]] for i in range(start, end) if 0 <= i < words_total and i != index]
-        contexts.append(context)
-        targets.append(word2num[word])
+        ctx = [word2num[words[i]] for i in range(start, end) if 0 <= i < words_total and i != index]
+        ctx = pad_sequences([ctx], maxlen=maxlen).flatten()
+        tgt = word2num[words[index]]
 
-    data_x = [pad_sequences([ctx], maxlen=maxlen).flatten() for ctx in contexts]
-    data_y = targets
 
-    return data_x, data_y
+        yield array(ctx), to_categorical(tgt, base_vector)
 
 def load_data(words, window_size, word2num):
     data_x = []
@@ -66,7 +60,7 @@ def load_data(words, window_size, word2num):
     for num in range(1, 2):
         x, y = load_data_from_file(
             'prepared_data{}.pkl'.format(num),
-            prepare_data, words, window_size, word2num, filenumber=num
+            prepare_data, words, window_size, word2num
         )
         data_x.extend(x)
         data_y.extend(y)
@@ -85,17 +79,10 @@ if __name__ == '__main__':
     )
 
     print("CARREGANDO DADOS")
-    x, y = load_data(words, window_size, word2num)
-    y = to_categorical(y, len(word2num.keys()))
-    y = array(y)
-    print("DADOS CARREGADOS")
+    import pdb;pdb.set_trace()
+    train_docs, train_labels = prepare_data(words, window_size, word2num)
+    test_docs, test_labels = prepare_data(words, window_size, word2num, init=10001, limit=12000)
 
-    slc = int(len(x)*0.9)
-    train_docs = x[:slc]
-    train_labels = y[:slc]
-
-    test_docs = x[slc:]
-    test_labels = y[slc:]
 
     cbow = Sequential()
     cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))

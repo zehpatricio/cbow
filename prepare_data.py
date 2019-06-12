@@ -18,5 +18,5 @@ for num in range(1,2):
         'prepared_data{}.pkl'.format(num), 
         model.prepare_data, 
         words[start: (end if end < num_words else num_words)],
-        window_size, word2num, filenumber=num
+        window_size, word2num
     )
