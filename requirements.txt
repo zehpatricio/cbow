@@ -16,7 +16,6 @@ mock==3.0.5
 nltk==3.4
 numpy==1.16.4
 pandas==0.24.2
-pkg-resources==0.0.0
 protobuf==3.8.0
 pygeocoder==1.2.5
 python-dateutil==2.8.0
