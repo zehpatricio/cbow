@@ -18,7 +18,6 @@ def to_categorical(data_y, size):
     base_vector = [0 for i in range(size)]
     tam = len(data_y)
     for i, y in enumerate(data_y):
-        percentage.progress(i, tam)
         vector = base_vector.copy()
         vector[y] = 1
         vectors.append(vector)
@@ -88,6 +87,7 @@ if __name__ == '__main__':
     print("CARREGANDO DADOS")
     x, y = load_data(words, window_size, word2num)
     y = to_categorical(y, len(word2num.keys()))
+    y = array(y)
     print("DADOS CARREGADOS")
 
     slc = int(len(x)*0.9)
@@ -101,14 +101,14 @@ if __name__ == '__main__':
     cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
     cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
     cbow.add(Dense(vocab_size, activation='softmax'))
-    cbow.compile(loss='categorical_crossentropy', optimizer='adadelta')
+    cbow.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
     cbow.summary()
 
     parada = EarlyStopping(
-        monitor='loss', min_delta=0.0004, patience=2, 
+        monitor='acc', min_delta=0.0004, patience=10, 
         verbose=1, mode='auto', restore_best_weights=True
     )
-    a = cbow.fit(train_docs, train_labels, epochs=1000, batch_size=64,callbacks=[parada])
+    a = cbow.fit(train_docs, train_labels, epochs=100, batch_size=64,callbacks=[parada])
     score = cbow.evaluate(test_docs, test_labels, batch_size=64)
+    cbow.save('rede2.h5')
     print(">>>>>>{}".format(score[1]*100))
-    cbow.save('rede.h5')

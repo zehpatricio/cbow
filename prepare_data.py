@@ -5,7 +5,7 @@ words = load_words.load_words()
 vocab = list(set(words))
 vocab_size = len(vocab)
 window_size = 2
-sexto = int(len(words)/15)
+sexto = int(len(words)/10)
 word2num, num2word = model.load_data_from_file(
     'word_dicts.pkl', model.load_word_dicts, vocab
 )
