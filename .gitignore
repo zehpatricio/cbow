@@ -1,3 +1,4 @@
 *.pkl
 *.pyc
 .vscode/settings.json
+*.h5
