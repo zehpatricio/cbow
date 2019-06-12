@@ -1,10 +1,9 @@
-from skimage.io import imread
-from skimage.transform import resize
 import numpy as np
 from keras import utils
+from keras.preprocessing.sequence import pad_sequences
 
 
-class WordsGenerator(Sequence):
+class WordsGenerator(utils.Sequence):
 
     def __init__(
         self, words, window_size, word2num, init=0, limit=20000, batch_size=64
@@ -27,9 +26,7 @@ class WordsGenerator(Sequence):
         end = (idx + 1) * self.batch_size
         end = end if end <= self.limit else self.limit
 
-        return np.array([
-            resize(imread(file_name), (200, 200))
-               for file_name in batch_x]), np.array(batch_y)
+        return self.prepare_data(start, end)
 
     def prepare_data(self, start, end):
         data_x = []
@@ -48,8 +45,9 @@ class WordsGenerator(Sequence):
             ctx = pad_sequences([ctx], maxlen=self.maxlen)
             tgt = self.word2num[self.words[index]]
 
-            data_x.append(array(ctx))
-            data_y.append(array([self.to_categorical(tgt)]))
+            data_x.append(ctx.flatten())
+            data_y.append(tgt)
 
+        data_x = np.array(data_x)
         data_y = utils.to_categorical(data_y, num_classes=self.vocab_size)
         return data_x, data_y

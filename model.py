@@ -1,7 +1,5 @@
 import load_words
-from numpy import array
 from keras.preprocessing.text import one_hot
-from keras.preprocessing.sequence import pad_sequences
 from keras.models import Sequential
 from keras.callbacks import EarlyStopping,ModelCheckpoint
 from keras.layers import Dense, Flatten, Dropout, Lambda
@@ -54,9 +52,13 @@ if __name__ == '__main__':
         monitor='acc', min_delta=0.0004, patience=3,
         verbose=1, mode='auto', restore_best_weights=True
     )
-    gen = generator.WordsGenerator(words, window_size, word2num)
+    save_network = ModelCheckpoint(
+        'network.{epoch:02d}.hdf5', save_best_only=True, monitor='acc'
+    )
+
+    gen = generator.WordsGenerator(words, window_size, word2num, limit=100000)
     a = cbow.fit_generator(
-        gen, epochs=100, steps_per_epoch=20000, callbacks=[parada],
+        gen, epochs=10, steps_per_epoch=100000, callbacks=[parada, save_network],
         use_multiprocessing=True, workers=6
     )
     # score = cbow.evaluate(test_docs, test_labels, batch_size=64)
