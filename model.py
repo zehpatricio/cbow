@@ -36,7 +36,7 @@ def load_word_dicts(vocab):
         num2word[index] = word
     return word2num, num2word
 
-def prepare_data(words, window_size, word2num, init=0, limit=10000):
+def prepare_data(words, window_size, word2num, init=0, limit=20000):
     maxlen = window_size*2
     words_total = len(words)
     base_vector = [0 for i in range(words_total)]
@@ -51,8 +51,10 @@ def prepare_data(words, window_size, word2num, init=0, limit=10000):
         ctx = pad_sequences([ctx], maxlen=maxlen).flatten()
         tgt = word2num[words[index]]
 
-
-        yield array(ctx), to_categorical(tgt, base_vector)
+        x = array(ctx)
+        y = to_categorical(tgt, base_vector)
+        import pdb;pdb.set_trace()
+        yield x, y
 
 def load_data(words, window_size, word2num):
     data_x = []
@@ -78,12 +80,6 @@ if __name__ == '__main__':
         'word_dicts.pkl', load_word_dicts, vocab
     )
 
-    print("CARREGANDO DADOS")
-    import pdb;pdb.set_trace()
-    train_docs, train_labels = prepare_data(words, window_size, word2num)
-    test_docs, test_labels = prepare_data(words, window_size, word2num, init=10001, limit=12000)
-
-
     cbow = Sequential()
     cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
     cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
@@ -95,7 +91,10 @@ if __name__ == '__main__':
         monitor='acc', min_delta=0.0004, patience=10, 
         verbose=1, mode='auto', restore_best_weights=True
     )
-    a = cbow.fit(train_docs, train_labels, epochs=100, batch_size=64,callbacks=[parada])
-    score = cbow.evaluate(test_docs, test_labels, batch_size=64)
+    a = cbow.fit_generator(
+        prepare_data(words, window_size, word2num), 
+        epochs=100, steps_per_epoch=64,callbacks=[parada]
+    )
+    # score = cbow.evaluate(test_docs, test_labels, batch_size=64)
     cbow.save('rede2.h5')
-    print(">>>>>>{}".format(score[1]*100))
+    # print(">>>>>>{}".format(score[1]*100))
