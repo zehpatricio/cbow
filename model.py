@@ -12,11 +12,7 @@ from keras import utils
 import pandas as pd
 import percentage
 import pickle
-
-def to_categorical(y, base_vector):
-    vector = base_vector.copy()
-    vector[y] = 1
-    return vector
+import generator
 
 def load_data_from_file(filename, func, *args, **kwargs):
     try:
@@ -35,24 +31,6 @@ def load_word_dicts(vocab):
         word2num[word] = index
         num2word[index] = word
     return word2num, num2word
-
-def prepare_data(words, window_size, word2num, init=0, limit=20000):
-    maxlen = window_size*2
-    words_total = len(words)
-    base_vector = [0 for i in range(len(word2num))]
-    
-    for index in range(init, limit):
-        if index >= limit:
-            break
-        start = index - window_size
-        end = index + window_size + 1
-        ctx = [word2num[words[i]] for i in range(start, end) if 0 <= i < words_total and i != index]
-        ctx = pad_sequences([ctx], maxlen=maxlen)#.flatten()
-        tgt = word2num[words[index]]
-
-        x = array(ctx)
-        y = array([to_categorical(tgt, base_vector)])
-        yield x, y
 
 if __name__ == '__main__':
     words = load_words.load_words()
@@ -73,12 +51,13 @@ if __name__ == '__main__':
     cbow.summary()
 
     parada = EarlyStopping(
-        monitor='acc', min_delta=0.0004, patience=3, 
+        monitor='acc', min_delta=0.0004, patience=3,
         verbose=1, mode='auto', restore_best_weights=True
     )
+    gen = generator.WordsGenerator(words, window_size, word2num)
     a = cbow.fit_generator(
-        prepare_data(words, window_size, word2num), 
-        epochs=100, steps_per_epoch=20000,callbacks=[parada]
+        gen, epochs=100, steps_per_epoch=20000, callbacks=[parada],
+        use_multiprocessing=True, workers=6
     )
     # score = cbow.evaluate(test_docs, test_labels, batch_size=64)
     cbow.save('rede2.h5')
