@@ -39,35 +39,20 @@ def load_word_dicts(vocab):
 def prepare_data(words, window_size, word2num, init=0, limit=20000):
     maxlen = window_size*2
     words_total = len(words)
-    base_vector = [0 for i in range(words_total)]
+    base_vector = [0 for i in range(len(word2num))]
     
     for index in range(init, limit):
         if index >= limit:
             break
-        percentage.progress(index, words_total)
         start = index - window_size
         end = index + window_size + 1
         ctx = [word2num[words[i]] for i in range(start, end) if 0 <= i < words_total and i != index]
-        ctx = pad_sequences([ctx], maxlen=maxlen).flatten()
+        ctx = pad_sequences([ctx], maxlen=maxlen)#.flatten()
         tgt = word2num[words[index]]
 
         x = array(ctx)
-        y = to_categorical(tgt, base_vector)
-        import pdb;pdb.set_trace()
+        y = array([to_categorical(tgt, base_vector)])
         yield x, y
-
-def load_data(words, window_size, word2num):
-    data_x = []
-    data_y = []
-    for num in range(1, 2):
-        x, y = load_data_from_file(
-            'prepared_data{}.pkl'.format(num),
-            prepare_data, words, window_size, word2num
-        )
-        data_x.extend(x)
-        data_y.extend(y)
-    
-    return array(x), array(y)
 
 if __name__ == '__main__':
     words = load_words.load_words()
@@ -88,12 +73,12 @@ if __name__ == '__main__':
     cbow.summary()
 
     parada = EarlyStopping(
-        monitor='acc', min_delta=0.0004, patience=10, 
+        monitor='acc', min_delta=0.0004, patience=3, 
         verbose=1, mode='auto', restore_best_weights=True
     )
     a = cbow.fit_generator(
         prepare_data(words, window_size, word2num), 
-        epochs=100, steps_per_epoch=64,callbacks=[parada]
+        epochs=100, steps_per_epoch=20000,callbacks=[parada]
     )
     # score = cbow.evaluate(test_docs, test_labels, batch_size=64)
     cbow.save('rede2.h5')
