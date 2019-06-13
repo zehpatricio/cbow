@@ -63,15 +63,14 @@ def prepare_data(words, window_size, word2num, filenumber=''):
 def load_data(words, window_size, word2num):
     data_x = []
     data_y = []
-    for num in range(1, 2):
+    for num in range(1, 5):
         x, y = load_data_from_file(
             'prepared_data{}.pkl'.format(num),
             prepare_data, words, window_size, word2num, filenumber=num
         )
         data_x.extend(x)
         data_y.extend(y)
-    
-    return array(x), array(y)
+    return array(data_x), array(data_y)
 
 if __name__ == '__main__':
     words = load_words.load_words()
@@ -83,11 +82,9 @@ if __name__ == '__main__':
     word2num, num2word = load_data_from_file(
         'word_dicts.pkl', load_word_dicts, vocab
     )
-
     print("CARREGANDO DADOS")
     x, y = load_data(words, window_size, word2num)
-    y = to_categorical(y, len(word2num.keys()))
-    y = array(y)
+    y = utils.to_categorical(y, num_classes=len(word2num.keys()))
     print("DADOS CARREGADOS")
 
     slc = int(len(x)*0.9)

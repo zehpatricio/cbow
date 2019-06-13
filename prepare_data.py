@@ -11,7 +11,7 @@ word2num, num2word = model.load_data_from_file(
 )
 num_words = len(words)
 # num = 1
-for num in range(1,2):
+for num in range(1,11):
     start = sexto*(num-1)
     end = sexto*num
     x, y = model.load_data_from_file(
