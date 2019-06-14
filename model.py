@@ -98,12 +98,15 @@ if __name__ == '__main__':
     cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
     cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
     cbow.add(Dense(vocab_size, activation='softmax'))
-    cbow.compile(loss='categorical_crossentropy', optimizer='adadelta', metrics=['accuracy'])
+    cbow.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     cbow.summary()
 
     parada = EarlyStopping(
         monitor='acc', min_delta=0.0004, patience=10, 
         verbose=1, mode='auto', restore_best_weights=True
+    )
+    checkpoint = ModelCheckpoint(
+        'network.h5', monitor='acc', save_best_only=True
     )
     a = cbow.fit(train_docs, train_labels, epochs=100, batch_size=64,callbacks=[parada])
     score = cbow.evaluate(test_docs, test_labels, batch_size=64)
