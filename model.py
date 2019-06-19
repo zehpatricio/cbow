@@ -6,7 +6,7 @@ from keras.models import Sequential
 from keras.callbacks import EarlyStopping,ModelCheckpoint
 from keras.layers import Dense, Flatten, Dropout, Lambda
 from keras.layers.embeddings import Embedding
-from keras.optimizers import SGD
+from keras.optimizers import SGD, Adam
 import keras.backend as K
 from keras import utils
 import pandas as pd
@@ -63,7 +63,7 @@ def prepare_data(words, window_size, word2num, filenumber=''):
 def load_data(words, window_size, word2num):
     data_x = []
     data_y = []
-    for num in range(1, 5):
+    for num in range(1, 11):
         x, y = load_data_from_file(
             'prepared_data{}.pkl'.format(num),
             prepare_data, words, window_size, word2num, filenumber=num
@@ -84,7 +84,7 @@ if __name__ == '__main__':
     )
     print("CARREGANDO DADOS")
     x, y = load_data(words, window_size, word2num)
-    y = utils.to_categorical(y, num_classes=len(word2num.keys()))
+    # y = utils.to_categorical(y, num_classes=len(word2num.keys()))
     print("DADOS CARREGADOS")
 
     slc = int(len(x)*0.9)
@@ -93,12 +93,35 @@ if __name__ == '__main__':
 
     test_docs = x[slc:]
     test_labels = y[slc:]
+    adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 
     cbow = Sequential()
     cbow.add(Embedding(input_dim=vocab_size, output_dim=dim, input_shape=(window_size*2,)))
     cbow.add(Lambda(lambda x: K.mean(x, axis=1), output_shape=(dim,)))
     cbow.add(Dense(vocab_size, activation='softmax'))
-    cbow.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    cbow.compile(loss='sparse_categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    cbow.summary()
+
+    parada = EarlyStopping(
+        monitor='acc', min_delta=0.0004, patience=20, 
+        verbose=1, mode='auto', restore_best_weights=True
+    )
+    checkpoint = ModelCheckpoint(
+        'network1.h5', monitor='acc', save_best_only=True
+    )
+    a = cbow.fit(
+        train_docs, train_labels, validation_data=(test_docs, test_labels), 
+        epochs=1000, batch_size=64,callbacks=[parada, checkpoint]
+    )
+    score = cbow.evaluate(test_docs, test_labels, batch_size=64)
+    cbow.save('rederede.h5')
+    print(">>>>>>{}".format(score[1]*100))
+
+
+
+
+
+    cbow.compile(loss='sparse_categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
     cbow.summary()
 
     parada = EarlyStopping(
@@ -106,9 +129,12 @@ if __name__ == '__main__':
         verbose=1, mode='auto', restore_best_weights=True
     )
     checkpoint = ModelCheckpoint(
-        'network.h5', monitor='acc', save_best_only=True
+        'network2.h5', monitor='acc', save_best_only=True
     )
-    a = cbow.fit(train_docs, train_labels, epochs=100, batch_size=64,callbacks=[parada])
+    a = cbow.fit(
+        train_docs, train_labels, validation_data=(test_docs, test_labels),
+        epochs=1000, batch_size=64,callbacks=[parada, checkpoint]
+    )
     score = cbow.evaluate(test_docs, test_labels, batch_size=64)
-    cbow.save('rede2.h5')
+    cbow.save('redeadam.h5')
     print(">>>>>>{}".format(score[1]*100))
