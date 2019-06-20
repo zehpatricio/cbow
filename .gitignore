@@ -2,3 +2,4 @@
 *.pyc
 .vscode/settings.json
 *.h5
+corpora/wikipedia/*
